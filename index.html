@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kelas 9 Fighter</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #2d3748;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-radius: 0 0 20px 20px;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hamburger {
+            cursor: pointer;
+            width: 30px;
+            height: 25px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.3s;
+        }
+
+        .hamburger span {
+            display: block;
+            height: 3px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 3px;
+            transition: all 0.3s;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(8px, 8px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+
+        /* Sidebar Menu */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            right: -350px;
+            width: 320px;
+            height: 100vh;
+            background: linear-gradient(180deg, #ffffff 0%, #f7fafc 100%);
+            box-shadow: -5px 0 30px rgba(0, 0, 0, 0.2);
+            transition: right 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 200;
+            padding: 80px 30px 30px;
+            overflow-y: auto;
+        }
+
+        .sidebar.active {
+            right: 0;
+        }
+
+        .sidebar nav a {
+            display: block;
+            padding: 18px 25px;
+            margin-bottom: 15px;
+            text-decoration: none;
+            color: #2d3748;
+            background: white;
+            border-radius: 15px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            font-weight: 600;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sidebar nav a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: left 0.3s;
+            z-index: -1;
+        }
+
+        .sidebar nav a:hover::before {
+            left: 0;
+        }
+
+        .sidebar nav a:hover {
+            color: white;
+            transform: translateX(-5px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            z-index: 150;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Content Sections */
+        .content-section {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Home Section */
+        .home-hero {
+            background: white;
+            border-radius: 30px;
+            padding: 60px 40px;
+            margin-top: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            text-align: center;
+        }
+
+        .home-hero h1 {
+            font-size: 56px;
+            margin-bottom: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 800;
+        }
+
+        .hero-image {
+            width: 100%;
+            max-width: 800px;
+            height: 400px;
+            background: linear-gradient(135deg, #e0e7ff 0%, #f3e7ff 100%);
+            border-radius: 20px;
+            margin: 30px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: #667eea;
+            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.2);
+        }
+
+        .welcome-text {
+            max-width: 700px;
+            margin: 40px auto 0;
+            font-size: 18px;
+            line-height: 1.8;
+            color: #4a5568;
+            background: linear-gradient(135deg, #fef3c7 0%, #ddd6fe 100%);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Gallery Section */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .gallery-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .gallery-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.3);
+        }
+
+        .gallery-image {
+            width: 100%;
+            height: 250px;
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .gallery-info {
+            padding: 20px;
+        }
+
+        .gallery-info h3 {
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 20px;
+        }
+
+        .gallery-info p {
+            color: #718096;
+            line-height: 1.6;
+        }
+
+        /* Structure Section */
+        .structure-container {
+            margin-top: 30px;
+        }
+
+        .structure-group {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .structure-group h3 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 24px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #e0e7ff;
+        }
+
+        .member-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .member-card {
+            background: linear-gradient(135deg, #fef3c7 0%, #ddd6fe 100%);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s;
+        }
+
+        .member-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .member-card .name {
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 16px;
+        }
+
+        .member-card .role {
+            color: #667eea;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        /* Table Styles untuk Jadwal Piket */
+        .table-container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 18px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        th:first-child {
+            border-radius: 15px 0 0 0;
+        }
+
+        th:last-child {
+            border-radius: 0 15px 0 0;
+        }
+
+        td {
+            padding: 15px 18px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #4a5568;
+            vertical-align: top;
+        }
+
+        td:first-child {
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        tr:hover td {
+            background: #f7fafc;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Schedule Grid for Jadwal Pelajaran */
+        .schedule-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .schedule-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+        }
+
+        .schedule-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 35px rgba(102, 126, 234, 0.3);
+        }
+
+        .schedule-card h3 {
+            color: white;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 15px 20px;
+            border-radius: 15px;
+            margin: -30px -30px 20px -30px;
+            font-size: 22px;
+            text-align: center;
+        }
+
+        .schedule-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .schedule-card li {
+            padding: 12px 18px;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #fef3c7 0%, #ddd6fe 100%);
+            border-radius: 12px;
+            color: #2d3748;
+            font-weight: 500;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: all 0.2s;
+        }
+
+        .schedule-card li:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+        }
+
+        .schedule-card li:last-child {
+            margin-bottom: 0;
+        }
+
+        .page-title {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 30px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .page-title h2 {
+            font-size: 36px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .home-hero h1 {
+                font-size: 36px;
+            }
+
+            .hero-image {
+                height: 250px;
+            }
+
+            .sidebar {
+                width: 280px;
+            }
+
+            .gallery-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .member-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .schedule-grid {
+                grid-template-columns: 1fr;
+            }
+
+            table {
+                font-size: 14px;
+            }
+
+            th, td {
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="logo">9 FIGHTER</div>
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </header>
+
+    <div class="overlay" id="overlay"></div>
+
+    <div class="sidebar" id="sidebar">
+        <nav>
+            <a href="#" data-page="home">Home</a>
+            <a href="#" data-page="gallery">Gallery</a>
+            <a href="#" data-page="structure">Structure Kelas</a>
+            <a href="#" data-page="piket">Jadwal Piket</a>
+            <a href="#" data-page="pelajaran">Jadwal Pelajaran</a>
+        </nav>
+    </div>
+
+    <div class="container">
+        <!-- Home Section -->
+        <section id="home" class="content-section active">
+            <div class="home-hero">
+    <h1>KELAS 9 FIGHTER</h1>
+    <div class="hero-image">
+        <img src="https://missing-brown-sfg3nzqtby-4qtvzif13b.edgeone.app/IMG-20251126-WA0028.jpg" alt="Kelas 9 Fight" style="width: 100%; height: 100%; object-fit: cover; border-radius: 20px;">
+    </div>
+    <div class="welcome-text">
+                    <p><strong>Selamat datang di website resmi Kelas 9 Fight!</strong></p>
+                    <p>Ini adalah ruang digital kami untuk berbagi kenangan, informasi, dan semangat kebersamaan. Di sini Anda dapat menemukan galeri foto-foto kenangan indah kami, struktur organisasi kelas, jadwal piket harian, hingga jadwal pelajaran lengkap.</p>
+                    <p><strong>Cara menggunakan:</strong> Tekan tombol <strong>garis tiga (☰)</strong> di pojok kanan atas untuk membuka menu navigasi dan menjelajahi halaman-halaman lainnya. Mari bersama-sama membuat tahun ajaran ini penuh makna! 🎓</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Gallery Section -->
+        <section id="gallery" class="content-section">
+            <div class="page-title">
+                <h2>Gallery Kenangan</h2>
+            </div>
+            <div class="gallery-grid">
+                <div class="gallery-card">
+                    <div class="gallery-image">
+        <img src="https://pleased-olive-zen0akcd8l-5le6plkdjz.edgeone.app/IMG-20251119-WA0149.jpg" alt="Hari Pertama Sekolah" style="width: 100%; height: 100%; object-fit: cover;">
+    </div>
+                <div class="gallery-info">
+                    <h3>Study Tour Ke Museum Pancasila Sakti</h3>
+                    <p></p>
+                    </div>
+                </div>
+               <div class="gallery-card">
+                  <div class="gallery-image">
+        <img src="https://consistent-blush-s1pumgxkmx-whyp5dnb0s.edgeone.app/IMG-20251119-WA0139.jpg" alt="Kegiatan Olahraga" style="width: 100%; height: 100%; object-fit: cover;">
+    </div>
+               <div class="gallery-info">
+                   <h3>Potret Orang Terlelah Di Dunia</h3>
+                   <p></p>
+                   </div>
+                </div>
+                <div class="gallery-card">
+                  <div class="gallery-image">
+        <img src="https://loose-chocolate-jqrxvrx3jr-5f3vfvqqqg.edgeone.app/IMG-20251126-WA0024.jpg" alt="Kegiatan Olahraga" style="width: 100%; height: 100%; object-fit: cover;">
+    </div>
+               <div class="gallery-info">
+                   <h3>Pa Heri Foto Sama Kue🗿</h3>
+                   <p>Kue nya sedikit rusak gara gara jatoh kesenggol radit😩</p>
+                   </div>
+                </div>
+                <div class="gallery-card">
+                  <div class="gallery-image">
+        <img src="https://cheerful-turquoise-krivswrpz2-gephbdxn61.edgeone.app/IMG-20251119-WA0156.jpg" alt="Kegiatan Olahraga" style="width: 100%; height: 100%; object-fit: cover;">
+    </div>
+               <div class="gallery-info">
+                   <h3>Potret Syila × Layla</h3>
+                   <p></p>
+                   </div>
+                </div>
+                <div class="gallery-card">
+                  <div class="gallery-image">
+        <img src="https://delighted-yellow-uhkh4folsg-g05erz3zty.edgeone.app/IMG-20251119-WA0097.jpg" alt="Kegiatan Olahraga" style="width: 100%; height: 100%; object-fit: cover;">
+    </div>
+               <div class="gallery-info">
+                   <h3>Potret Sienna × Nindhita</h3>
+                   <p></p>
+                   </div>
+                </div>
+                <div class="gallery-card">
+                  <div class="gallery-image">
+        <img src="https://nice-chocolate-3bry8m8wbl-rwoio97s0k.edgeone.app/IMG-20251119-WA0098.jpg" alt="Kegiatan Olahraga" style="width: 100%; height: 100%; object-fit: cover;">
+    </div>
+               <div class="gallery-info">
+                   <h3>Potret Najla × Zennetha</h3>
+                   <p></p>
+                   </div>
+                </div>
+               <div class="gallery-card">
+                  <div class="gallery-image">
+        <img src="https://imaginative-indigo-3riknpriw8-utx296uqj2.edgeone.app/IMG-20251119-WA0071.jpg" alt="Kegiatan Olahraga" style="width: 100%; height: 100%; object-fit: cover;">
+    </div>
+               <div class="gallery-info">
+                   <h3>Potret Nabil Dan Kawan Kawan</h3>
+                   <p></p>
+                   </div>
+                </div>
+                <div class="gallery-card">
+                  <div class="gallery-image">
+        <img src="https://horizontal-emerald-cv41dtblue-og3j1sisxo.edgeone.app/IMG-20251119-WA0155.jpg" alt="Kegiatan Olahraga" style="width: 100%; height: 100%; object-fit: cover;">
+    </div>
+               <div class="gallery-info">
+                   <h3>Potret Fatih × Bintang</h3>
+                   <p></p>
+                   </div>
+                </div>
+                <div class="gallery-card">
+                  <div class="gallery-image">
+        <img src="https://dear-green-m0yfvzkavk-3a1mlky368.edgeone.app/IMG-20251119-WA0122.jpg" alt="Kegiatan Olahraga" style="width: 100%; height: 100%; object-fit: cover;">
+    </div>
+               <div class="gallery-info">
+                   <h3>Potret Vanessa × Nanda</h3>
+                   <p></p>
+                   </div>
+                </div>
+                <div class="gallery-card">
+                  <div class="gallery-image">
+        <img src="https://homeless-sapphire-gwoikpziui-aglzckr5da.edgeone.app/IMG-20251119-WA0129.jpg" alt="Kegiatan Olahraga" style="width: 100%; height: 100%; object-fit: cover;">
+    </div>
+               <div class="gallery-info">
+                   <h3>Potret Guru Pendamping Study Tour</h3>
+                   <p>Pa heri ga keliatan nih</p>
+                   </div>
+                </div>
+             </div>
+        </section>
+
+        <!-- Structure Section -->
+        <section id="structure" class="content-section">
+            <div class="page-title">
+                <h2>Struktur Organisasi Kelas</h2>
+            </div>
+            <div class="structure-container">
+                <div class="structure-group">
+                    <h3>Wali Kelas</h3>
+                    <div class="member-grid">
+                        <div class="member-card">
+                            <div class="name">Heri Fajrin. M.Pd.</div>
+                            <div class="role">Wali Kelas</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="structure-group">
+                    <h3>Pengurus Inti</h3>
+                    <div class="member-grid">
+                        <div class="member-card">
+                            <div class="name">Syaila Isnaini Padma</div>
+                            <div class="role">Ketua Kelas</div>
+                        </div>
+                        <div class="member-card">
+                            <div class="name">Bayu Guntur Pamungkas</div>
+                            <div class="role">Wakil Ketua Kelas</div>
+                        </div>
+                        <div class="member-card">
+                            <div class="name">Farah Nabila</div>
+                            <div class="role">Sekretaris 1</div>
+                        </div>
+                        <div class="member-card">
+                            <div class="name">Reza Firmansyah</div>
+                            <div class="role">Sekretaris 2</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="structure-group">
+                    <h3>Anggota Kelas (30 Murid)</h3>
+                    <div class="member-grid">
+                        <div class="member-card"><div class="name">Arbila Ahmad</div></div>
+                        <div class="member-card"><div class="name">Raffly Ahmad Saputra</div></div>
+                        <div class="member-card"><div class="name">Muhammad Herlangga Saputra</div></div>
+                        <div class="member-card"><div class="name">Jio Hadi Pramadhan</div></div>
+                        <div class="member-card"><div class="name">Hasyfary Ibnu Arief</div></div>
+                        <div class="member-card"><div class="name">Muhammad Fathan Azzikri</div></div>
+                        <div class="member-card"><div class="name">Septian Dwi Ariyanto</div></div>
+                        <div class="member-card"><div class="name">Maulana Wahid Kefyani</div></div>
+                        <div class="member-card"><div class="name">Azahra Syahrani</div></div>
+                        <div class="member-card"><div class="name">Nabiel Syakir Ambar</div></div>
+                        <div class="member-card"><div class="name">Milan Okta Bintang Pratama</div></div>
+                        <div class="member-card"><div class="name">Nuriska Elvira Oktaviana</div></div>
+                        <div class="member-card"><div class="name">Nanda Aisyah Umayya</div></div>
+                        <div class="member-card"><div class="name">Nindhita Adelia Putri</div></div>
+                        <div class="member-card"><div class="name">Elsamoria Hutahaean</div></div>
+                        <div class="member-card"><div class="name">Dinar Raditya Wibowo</div></div>
+                        <div class="member-card"><div class="name">Vanesha Putri Maharani</div></div>
+                        <div class="member-card"><div class="name">Rico Novariki</div></div>
+                        <div class="member-card"><div class="name">Layla Azizah</div></div>
+                        <div class="member-card"><div class="name">Muhammad Rayhan</div></div>
+                        <div class="member-card"><div class="name">Farel Akmal</div></div>
+                        <div class="member-card"><div class="name">Chassey Putri Ferlikha</div></div>
+                        <div class="member-card"><div class="name">Najla Qonita Effendy</div></div>
+                        <div class="member-card"><div class="name">Ulan Khoiriyah Rahmansyah</div></div>
+                        <div class="member-card"><div class="name">Queenisa Adila Putri</div></div>
+                        <div class="member-card"><div class="name">Muhammad Rizky Aditya</div></div>
+                        <div class="member-card"><div class="name">Nadya Mandala Putri</div></div>
+                        <div class="member-card"><div class="name">Fathan Sabilan Yasaro</div></div>
+                        <div class="member-card"><div class="name">Muhammad Fatih Al Khamil</div></div>
+                        <div class="member-card"><div class="name">Sienna Putri Agnisa</div></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Jadwal Piket Section -->
+        <section id="piket" class="content-section">
+            <div class="page-title">
+                <h2>Jadwal Piket Kelas</h2>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Hari</th>
+                            <th>Petugas</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td rowspan="6">Senin</td>
+                            <td>Ahmad Rizki Pratama</td>
+                        </tr>
+                        <tr>
+                            <td>Alya Zahra</td>
+                        </tr>
+                        <tr>
+                            <td>Budi Santoso</td>
+                        </tr>
+                        <tr>
+                            <td>Citra Dewi</td>
+                        </tr>
+                        <tr>
+                            <td>Dani Prasetyo</td>
+                        </tr>
+                        <tr>
+                            <td>Eka Wijaya</td>
+                        </tr>
+
+                        <tr>
+                            <td rowspan="6">Selasa</td>
+                            <td>Dinda Safira Putri</td>
+                        </tr>
+                        <tr>
+                            <td>Fitri Handayani</td>
+                        </tr>
+                        <tr>
+                            <td>Gita Permata</td>
+                        </tr>
+                        <tr>
+                            <td>Hendra Gunawan</td>
+                        </tr>
+                        <tr>
+                            <td>Intan Maharani</td>
+                        </tr>
+                        <tr>
+                            <td>Joko Susilo</td>
+                        </tr>
+
+                        <tr>
+                            <td rowspan="6">Rabu</td>
+                            <td>Farah Nabila</td>
+                        </tr>
+                        <tr>
+                            <td>Kartika Sari</td>
+                        </tr>
+                        <tr>
+                            <td>Lukman Hakim</td>
+                        </tr>
+                        <tr>
+                            <td>Maya Anggraini</td>
+                        </tr>
+                        <tr>
+                            <td>Nanda Pratama</td>
+                        </tr>
+                        <tr>
+                            <td>Olivia Putri</td>
+                        </tr>
+
+                        <tr>
+                            <td rowspan="6">Kamis</td>
+                            <td>Reza Firmansyah</td>
+                        </tr>
+                        <tr>
+                            <td>Putra Wijaya</td>
+                        </tr>
+                        <tr>
+                            <td>Qori Amanda</td>
+                        </tr>
+                        <tr>
+                            <td>Rian Maulana</td>
+                        </tr>
+                        <tr>
+                            <td>Siska Amelia</td>
+                        </tr>
+                        <tr>
+                            <td>Taufik Rahman</td>
+                        </tr>
+
+                        <tr>
+                            <td rowspan="6">Jumat</td>
+                            <td>Umi Kalsum</td>
+                        </tr>
+                        <tr>
+                            <td>Vino Raharjo</td>
+                        </tr>
+                        <tr>
+                            <td>Wulan Sari</td>
+                        </tr>
+                        <tr>
+                            <td>Xavier Pratama</td>
+                        </tr>
+                        <tr>
+                            <td>Yuni Astuti</td>
+                        </tr>
+                        <tr>
+                            <td>Zaki Mubarak</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Jadwal Pelajaran Section -->
+        <section id="pelajaran" class="content-section">
+            <div class="page-title">
+                <h2>Jadwal Pelajaran</h2>
+            </div>
+            <div class="schedule-grid">
+                <div class="schedule-card">
+                    <h3>Senin</h3>
+                    <ul>
+                        <li>Olahraga</li>
+                        <li>Bina Kesiswaan</li>
+                        <li>Bahasa Inggris</li>
+                        <li>Prakarya</li>
+                    </ul>
+                </div>
+                <div class="schedule-card">
+                    <h3>Selasa</h3>
+                    <ul>
+                        <li>Pendidikan Agama</li>
+                        <li>Bahasa Indonesia</li>
+                        <li>Matematika</li>
+                        <li>Informatika</li>
+                    </ul>
+                </div>
+                <div class="schedule-card">
+                    <h3>Rabu</h3>
+                    <ul>
+                        <li>Ilmu Pengetahuan Sosial</li>
+                        <li>Bahasa Inggris</li>
+                        <li>Pendidikan Kewarganegaraan</li>
+                        <li>Matematika</li>
+                    </ul>
+                </div>
+                <div class="schedule-card">
+                    <h3>Kamis</h3>
+                    <ul>
+                        <li>Prakarya</li>
+                        <li>Ilmu Pengetahuan Alam</li>
+                        <li>Bahasa Indonesia</li>
+                        <li>Ilmu Pengetahuan Sosial</li>
+                    </ul>
+                </div>
+                <div class="schedule-card">
+                    <h3>Jumat</h3>
+                    <ul>
+                        <li>Ilmu Pengetahuan Alam</li>
+                        <li>Matematika</li>
+                        <li>Informatika</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Hamburger Menu Toggle
+        const hamburger = document.getElementById('hamburger');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+
+        hamburger.addEventListener('click', function() {
+            hamburger.classList.toggle('active');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        });
+
+        overlay.addEventListener('click', function() {
+            hamburger.classList.remove('active');
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+        });
+
+        // Navigation
+        const navLinks = document.querySelectorAll('.sidebar nav a');
+        const sections = document.querySelectorAll('.content-section');
+
+        navLinks.forEach(function(link) {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetPage = link.getAttribute('data-page');
+
+                // Hide all sections
+                sections.forEach(function(section) {
+                    section.classList.remove('active');
+                });
+
+                // Show target section
+                document.getElementById(targetPage).classList.add('active');
+
+                // Close sidebar
+                hamburger.classList.remove('active');
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+
+                // Scroll to top
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+    </script>
+</body>
+</html>
+                
